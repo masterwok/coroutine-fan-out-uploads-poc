@@ -44,11 +44,13 @@ private suspend fun cancelItem(item: Int) {
     mapping.remove(item)
 }
 
+private const val MAX_CONCURRENT = 3
+
 @ExperimentalCoroutinesApi
 suspend fun main(args: Array<String>): Unit = withContext(Dispatchers.Default) {
     val receiver = produceItems()
 
-    repeat(3) { launchProcessor(it, receiver)}
+    repeat(MAX_CONCURRENT) { launchProcessor(it, receiver)}
 
     launch {
         delay(1000)
