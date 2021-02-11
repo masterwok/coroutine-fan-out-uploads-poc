@@ -6,7 +6,7 @@ private val mapping = mutableMapOf<Int, Job>()
 
 @ExperimentalCoroutinesApi
 private fun CoroutineScope.produceItems() = produce {
-    for(item in (0..1)) {
+    for(item in (0..10)) {
         println("Sending: $item")
         send(item)
     }
@@ -34,11 +34,11 @@ private fun CoroutineScope.launchProcessor(processorId: Int, channel: ReceiveCha
 
 private suspend fun uploadItem(item: Int) {
     delay(4000)
-    println("Done uploading: $item")
+    println(">>> Done uploading: $item ✅")
 }
 
 private suspend fun cancelItem(item: Int) {
-    println(">>> cancelling $item <<<")
+    println(">>> cancelling $item ❌")
 
     mapping[item]?.cancelAndJoin()
     mapping.remove(item)
@@ -48,7 +48,7 @@ private suspend fun cancelItem(item: Int) {
 suspend fun main(args: Array<String>): Unit = withContext(Dispatchers.Default) {
     val receiver = produceItems()
 
-    repeat(1) { launchProcessor(it, receiver)}
+    repeat(3) { launchProcessor(it, receiver)}
 
     launch {
         delay(1000)
